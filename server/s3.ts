@@ -32,6 +32,7 @@ export async function uploadToS3(
     Key: key,
     Body: fileBuffer,
     ContentType: contentType,
+    ACL: "public-read",
   };
 
   // Upload file to S3
@@ -53,6 +54,7 @@ export async function generatePresignedUrl(
     Bucket: bucketName,
     Key: key,
     ContentType: contentType,
+    ACL: "public-read",
   });
 
   // Generate presigned URL that expires in 5 minutes
