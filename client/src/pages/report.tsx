@@ -15,6 +15,7 @@ export default function Report() {
   const [, navigate] = useLocation();
   const [photos, setPhotos] = useState<{url: string, name: string}[]>([]);
   const [building, setBuilding] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
   const [reportType, setReportType] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [contact, setContact] = useState<string>("");
