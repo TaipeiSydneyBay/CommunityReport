@@ -8,8 +8,8 @@ export default function Home() {
     <div className="min-h-screen w-full bg-gray-50 p-4">
       <div className="max-w-md mx-auto">
         <div className="text-center my-8">
-          <h1 className="text-3xl font-bold text-gray-900">社區檢舉系統</h1>
-          <p className="text-gray-600 mt-2">提交檢舉以解決社區問題</p>
+          <h1 className="text-3xl font-bold text-gray-900">社區回報改善系統</h1>
+          <p className="text-gray-600 mt-2">提交回報改善以解決社區問題</p>
         </div>
 
         <Card className="mb-6">

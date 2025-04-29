@@ -81,7 +81,7 @@ export default function Report() {
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <h1 className="text-xl font-semibold text-center">社區檢舉</h1>
+          <h1 className="text-xl font-semibold text-center">社區回報改善</h1>
           <div className="w-6"></div> {/* Spacer for alignment */}
         </div>
       </header>
@@ -117,7 +117,7 @@ export default function Report() {
             <div className="ml-3">
               <h3 className="text-sm font-medium text-blue-800">照片提交說明</h3>
               <div className="mt-1 text-xs text-blue-700">
-                <p>上傳的照片將保存在安全的服務器上，並僅用於處理您的檢舉。系統支持 JPG、PNG 和 HEIC 格式，單張照片大小不超過 10MB。</p>
+                <p>上傳的照片將保存在安全的服務器上，並僅用於處理您的回報改善。系統支持 JPG、PNG 和 HEIC 格式，單張照片大小不超過 10MB。</p>
               </div>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function Report() {
           onClick={handleSubmit}
           disabled={submitMutation.isPending}
         >
-          {submitMutation.isPending ? "提交中..." : "提交檢舉"}
+          {submitMutation.isPending ? "提交中..." : "提交回報改善"}
         </Button>
       </footer>
 

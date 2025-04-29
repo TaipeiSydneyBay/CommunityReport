@@ -296,20 +296,22 @@ export function CategorySelectionSection({
       {/* Report Type Selection */}
       <div className="mb-4">
         <Label htmlFor="report-type" className="text-sm font-medium text-gray-700 mb-1">
-          檢舉類型 <span className="text-red-500">*</span>
+          回報改善類型 <span className="text-red-500">*</span>
         </Label>
         <Select value={reportType} onValueChange={setReportType}>
           <SelectTrigger id="report-type" className="w-full rounded-lg border border-gray-300 py-3 px-4">
-            <SelectValue placeholder="請選擇檢舉類型" />
+            <SelectValue placeholder="請選擇回報改善類型" />
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="noise">噪音問題</SelectItem>
-              <SelectItem value="safety">安全隱患</SelectItem>
-              <SelectItem value="facility">設施損壞</SelectItem>
-              <SelectItem value="hygiene">衛生問題</SelectItem>
-              <SelectItem value="parking">停車違規</SelectItem>
-              <SelectItem value="other">其他</SelectItem>
+              <SelectItem value="ceiling_wall_floor">天地壁</SelectItem>
+              <SelectItem value="socket_switch">插座/開關</SelectItem>
+              <SelectItem value="paint">油漆</SelectItem>
+              <SelectItem value="equipment_location">設備安裝位置</SelectItem>
+              <SelectItem value="cleaning">清潔</SelectItem>
+              <SelectItem value="water_leakage">漏水</SelectItem>
+              <SelectItem value="major_defect">與圖面不符之重大短缺</SelectItem>
+              <SelectItem value="other_marked">其他-請在圖面標註類型</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

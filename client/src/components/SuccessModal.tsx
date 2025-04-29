@@ -24,10 +24,10 @@ export function SuccessModal({ isOpen, onClose, reportId }: SuccessModalProps) {
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
           <DialogTitle className="mt-4 text-lg font-medium text-gray-900">
-            檢舉提交成功
+            回報改善提交成功
           </DialogTitle>
           <DialogDescription className="mt-2 text-sm text-gray-500">
-            感謝您的檢舉，社區管理人員將會盡快處理您的反饋。案件編號：
+            感謝您的回報，社區管理人員將會盡快處理您的改善建議。案件編號：
             <span className="font-medium">{reportId}</span>
           </DialogDescription>
         </DialogHeader>
