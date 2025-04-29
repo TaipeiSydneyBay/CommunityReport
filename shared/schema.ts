@@ -20,6 +20,7 @@ export type User = typeof users.$inferSelect;
 export const reports = pgTable("reports", {
   id: serial("id").primaryKey(),
   building: text("building").notNull(),
+  location: text("location").notNull(),
   reportType: text("report_type").notNull(),
   description: text("description").notNull(),
   contact: text("contact"),
@@ -34,6 +35,7 @@ export const insertReportSchema = createInsertSchema(reports).omit({
 
 export const reportValidationSchema = insertReportSchema.extend({
   building: z.string().min(1, { message: "請選擇棟別" }),
+  location: z.string().min(1, { message: "請選擇區域/樓層" }),
   reportType: z.string().min(1, { message: "請選擇檢舉類型" }),
   description: z.string().min(1, { message: "請填寫問題描述" }).max(500, { message: "描述不能超過500字" }),
   photos: z.array(z.string()).min(1, { message: "請至少上傳一張照片" }),

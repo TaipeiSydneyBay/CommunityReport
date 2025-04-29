@@ -28,6 +28,7 @@ export default function Report() {
     mutationFn: async () => {
       const reportData = {
         building,
+        location,
         reportType,
         description,
         contact,
@@ -91,6 +92,8 @@ export default function Report() {
         <CategorySelectionSection 
           building={building} 
           setBuilding={setBuilding} 
+          location={location}
+          setLocation={setLocation}
           reportType={reportType} 
           setReportType={setReportType} 
         />
