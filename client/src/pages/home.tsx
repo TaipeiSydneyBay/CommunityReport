@@ -56,8 +56,8 @@ export default function Home() {
                     <BarChart className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-medium">3. 問題描述</h3>
-                    <p className="text-sm text-gray-500">詳細描述問題的狀況</p>
+                    <h3 className="font-medium">3. 問題描述與反映</h3>
+                    <p className="text-sm text-gray-500">詳細描述改善需求及建議</p>
                   </div>
                 </div>
                 

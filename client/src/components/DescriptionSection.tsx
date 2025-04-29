@@ -25,7 +25,7 @@ export function DescriptionSection({
 
   return (
     <section className="px-4 py-2 border-t border-gray-100">
-      <h2 className="text-lg font-medium mb-4">問題描述</h2>
+      <h2 className="text-lg font-medium mb-4">問題描述與反映</h2>
       
       <div className="mb-1">
         <Label htmlFor="description" className="text-sm font-medium text-gray-700 mb-1">
@@ -37,7 +37,7 @@ export function DescriptionSection({
           onChange={handleDescriptionChange}
           rows={5}
           className="block w-full rounded-lg border border-gray-300 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
-          placeholder="請詳細描述問題情況，包括事件發生的時間、地點和具體情況..."
+          placeholder="請詳細描述需要改善的情況，包括確切位置及建議的改善方式..."
           maxLength={500}
         />
         <div className="flex justify-end mt-1">
@@ -54,7 +54,7 @@ export function DescriptionSection({
           value={contact}
           onChange={(e) => setContact(e.target.value)}
           className="block w-full rounded-lg border border-gray-300 py-3 px-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-          placeholder="請留下您的聯絡方式，以便我們跟進（選填）"
+          placeholder="請留下您的聯絡方式，以便我們跟進改善結果（選填）"
         />
       </div>
     </section>

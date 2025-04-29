@@ -97,7 +97,7 @@ export function PhotoUploadSection({ photos, setPhotos }: PhotoUploadSectionProp
   return (
     <section className="px-4 py-6">
       <h2 className="text-lg font-medium mb-2">上傳照片</h2>
-      <p className="text-sm text-gray-500 mb-4">請上傳與檢舉相關的照片，最多 4 張</p>
+      <p className="text-sm text-gray-500 mb-4">請上傳與改善回報相關的照片，最多 4 張</p>
       
       {/* Photo Upload Area */}
       <div className="mb-6">
@@ -138,7 +138,7 @@ export function PhotoUploadSection({ photos, setPhotos }: PhotoUploadSectionProp
               <div key={index} className="relative aspect-square">
                 <img 
                   src={photo.url} 
-                  alt={`檢舉照片預覽 ${index + 1}`} 
+                  alt={`回報改善照片預覽 ${index + 1}`} 
                   className="w-full h-full object-cover rounded-lg" 
                 />
                 <button 
