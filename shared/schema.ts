@@ -2,7 +2,7 @@ import { pgTable, text, serial, integer, boolean, json, timestamp } from "drizzl
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
+export const users = pgTable("cr_users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
@@ -17,7 +17,7 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
 // Community report schema
-export const reports = pgTable("reports", {
+export const reports = pgTable("cr_reports", {
   id: serial("id").primaryKey(),
   building: text("building").notNull(),
   location: text("location").notNull(),

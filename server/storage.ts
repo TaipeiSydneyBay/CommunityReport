@@ -1,4 +1,6 @@
-import { users, type User, type InsertUser, type Report, type InsertReport } from "@shared/schema";
+import { users, reports, type User, type InsertUser, type Report, type InsertReport } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
 // you might need
@@ -12,51 +14,35 @@ export interface IStorage {
   getAllReports(): Promise<Report[]>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private reports: Map<number, Report>;
-  currentUserId: number;
-  currentReportId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.reports = new Map();
-    this.currentUserId = 1;
-    this.currentReportId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db.insert(users).values(insertUser).returning();
     return user;
   }
 
   async createReport(report: InsertReport): Promise<Report> {
-    const id = this.currentReportId++;
-    const createdAt = new Date();
-    const newReport: Report = { ...report, id, createdAt };
-    this.reports.set(id, newReport);
+    const [newReport] = await db.insert(reports).values(report).returning();
     return newReport;
   }
 
   async getReportById(id: number): Promise<Report | undefined> {
-    return this.reports.get(id);
+    const [report] = await db.select().from(reports).where(eq(reports.id, id));
+    return report || undefined;
   }
 
   async getAllReports(): Promise<Report[]> {
-    return Array.from(this.reports.values());
+    return await db.select().from(reports).orderBy(reports.createdAt);
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
