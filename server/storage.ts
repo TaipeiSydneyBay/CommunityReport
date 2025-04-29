@@ -31,7 +31,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createReport(report: InsertReport): Promise<Report> {
-    const [newReport] = await db.insert(reports).values(report).returning();
+    // Ensure photos is correctly cast as string[] for database storage
+    const reportData = {
+      ...report,
+      photos: report.photos as unknown as string[]
+    };
+    
+    const [newReport] = await db.insert(reports).values(reportData).returning();
     return newReport;
   }
 
