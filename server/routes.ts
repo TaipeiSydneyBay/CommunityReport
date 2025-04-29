@@ -40,12 +40,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Upload image to S3
   app.post("/api/upload", upload.single("photo"), async (req: Request, res: Response) => {
     try {
+      console.log("Upload request received:", { 
+        body: req.body,
+        file: req.file ? "File received" : "No file received",
+        headers: req.headers,
+      });
+      
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
       }
 
       const file = req.file;
+      console.log("Processing file:", {
+        filename: file.originalname,
+        mimetype: file.mimetype,
+        size: file.size,
+      });
+      
       const s3URL = await uploadToS3(file.buffer, file.originalname, file.mimetype);
+      console.log("File uploaded to S3:", s3URL);
       
       return res.json({ url: s3URL });
     } catch (error) {

@@ -12,12 +12,22 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
+  const options: RequestInit = {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
-  });
+  };
+
+  if (data) {
+    if (data instanceof FormData) {
+      // FormData 不需要手動設定 Content-Type，瀏覽器會自動加上正確的 multipart boundary
+      options.body = data;
+    } else {
+      options.headers = { "Content-Type": "application/json" };
+      options.body = JSON.stringify(data);
+    }
+  }
+
+  const res = await fetch(url, options);
 
   await throwIfResNotOk(res);
   return res;
