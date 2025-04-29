@@ -11,5 +11,10 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export const pool = new Pool({ 
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false // 必須設為 false 以接受自簽證書
+  }
+});
 export const db = drizzle({ client: pool, schema });
