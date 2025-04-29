@@ -14,12 +14,12 @@ export default function Home() {
 
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>新增檢舉</CardTitle>
-            <CardDescription>提交社區問題報告</CardDescription>
+            <CardTitle>新增回報改善</CardTitle>
+            <CardDescription>提交社區問題改善報告</CardDescription>
           </CardHeader>
           <CardContent>
             <Link href="/report">
-              <Button className="w-full">開始檢舉</Button>
+              <Button className="w-full">開始回報改善</Button>
             </Link>
           </CardContent>
         </Card>
@@ -27,7 +27,7 @@ export default function Home() {
         <div className="grid grid-cols-1 gap-4 mb-8">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-lg">社區檢舉流程</CardTitle>
+              <CardTitle className="text-lg">社區回報改善流程</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -66,8 +66,8 @@ export default function Home() {
                     <Send className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-medium">4. 提交檢舉</h3>
-                    <p className="text-sm text-gray-500">完成後提交檢舉單</p>
+                    <h3 className="font-medium">4. 提交回報改善</h3>
+                    <p className="text-sm text-gray-500">完成後提交回報改善單</p>
                   </div>
                 </div>
               </div>
