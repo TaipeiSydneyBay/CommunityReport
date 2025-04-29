@@ -20,7 +20,7 @@ export function CategorySelectionSection({
 }: CategorySelectionSectionProps) {
   return (
     <section className="px-4 py-2 border-t border-gray-100">
-      <h2 className="text-lg font-medium mb-4">檢舉類別</h2>
+      <h2 className="text-lg font-medium mb-4">回報改善類別</h2>
       
       {/* Building Selection */}
       <div className="mb-4">
