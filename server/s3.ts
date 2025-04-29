@@ -1,12 +1,12 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand, ObjectCannedACL } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import crypto from "crypto";
 
 // Get AWS credentials from environment variables
 const accessKeyId = process.env.AWS_ACCESS_KEY_ID || "";
 const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || "";
-const region = process.env.AWS_REGION || "us-east-1";
-const bucketName = process.env.S3_BUCKET_NAME || "community-reports-bucket";
+const region = process.env.AWS_REGION || "ap-southeast-2"; // 設定為正確的區域：澳洲雪梨
+const bucketName = process.env.S3_BUCKET_NAME || "taipei-sydney-bay";
 
 // Create S3 client instance
 const s3Client = new S3Client({
@@ -32,14 +32,14 @@ export async function uploadToS3(
     Key: key,
     Body: fileBuffer,
     ContentType: contentType,
-    ACL: "public-read",
+    ACL: "public-read" as ObjectCannedACL,
   };
 
   // Upload file to S3
   await s3Client.send(new PutObjectCommand(params));
 
   // Return URL of uploaded file
-  return `https://${bucketName}.s3.${region}.amazonaws.com/${key}`;
+  return `https://${bucketName}.s3-${region}.amazonaws.com/${key}`;
 }
 
 // Generate presigned URL for direct frontend uploads
@@ -54,7 +54,7 @@ export async function generatePresignedUrl(
     Bucket: bucketName,
     Key: key,
     ContentType: contentType,
-    ACL: "public-read",
+    ACL: "public-read" as ObjectCannedACL,
   });
 
   // Generate presigned URL that expires in 5 minutes
