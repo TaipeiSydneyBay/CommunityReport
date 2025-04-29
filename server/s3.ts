@@ -37,7 +37,7 @@ export async function uploadToS3(
     Key: key,
     Body: fileBuffer,
     ContentType: contentType,
-    // ACL 設定已移除，因為此儲存桶不支援 ACLs
+    ACL: "public-read",
   };
 
   // Upload file to S3
@@ -59,7 +59,7 @@ export async function generatePresignedUrl(
     Bucket: bucketName,
     Key: key,
     ContentType: contentType,
-    // ACL 設定已移除，因為此儲存桶不支援 ACLs
+    ACL: "public-read",
   });
 
   // Generate presigned URL that expires in 5 minutes
