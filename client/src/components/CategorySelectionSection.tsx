@@ -1,5 +1,8 @@
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
+import { useEffect, useState } from "react";
 
 interface CategorySelectionSectionProps {
   building: string;
@@ -10,6 +13,14 @@ interface CategorySelectionSectionProps {
   setReportType: (value: string) => void;
 }
 
+// 位置狀態介面
+interface LocationStatus {
+  building: string;
+  location: string;
+  reportCount: number;
+  latestReportDate: string | null;
+}
+
 export function CategorySelectionSection({ 
   building, 
   setBuilding, 
@@ -18,6 +29,35 @@ export function CategorySelectionSection({
   reportType, 
   setReportType 
 }: CategorySelectionSectionProps) {
+  // 使用 React Query 獲取所有位置的報告狀態
+  const { data: locationsData, isLoading } = useQuery({
+    queryKey: ['/api/locations/status'],
+    staleTime: 60000, // 1分鐘內不重新獲取
+  });
+  
+  // 將數據轉換為更易於使用的格式
+  const [locationStatusMap, setLocationStatusMap] = useState<Record<string, LocationStatus>>({});
+  
+  useEffect(() => {
+    if (locationsData?.locationStatus) {
+      const statusMap: Record<string, LocationStatus> = {};
+      locationsData.locationStatus.forEach((status: LocationStatus) => {
+        statusMap[status.location] = status;
+      });
+      setLocationStatusMap(statusMap);
+    }
+  }, [locationsData]);
+  
+  // 判斷某位置是否有報告
+  const hasReports = (locationId: string) => {
+    return locationStatusMap[locationId] !== undefined;
+  };
+  
+  // 獲取某位置的報告數量
+  const getReportCount = (locationId: string) => {
+    return locationStatusMap[locationId]?.reportCount || 0;
+  };
+  
   return (
     <section className="px-4 py-2 border-t border-gray-100">
       <h2 className="text-lg font-medium mb-4">回報改善類別</h2>
@@ -66,23 +106,57 @@ export function CategorySelectionSection({
             <SelectGroup>
               {building === 'A' && (
                 <>
-                  <SelectItem value="A-lobby">菲儷大廳</SelectItem>
-                  <SelectItem value="A-stairs">藝術梯廳</SelectItem>
-                  <SelectItem value="A-reading">敦峰閱覽室</SelectItem>
-                  <SelectItem value="A-kids">小王子親子共讀區</SelectItem>
-                  <SelectItem value="A-emergency">安全梯間</SelectItem>
-                  <SelectItem value="A-elevator">梯廳</SelectItem>
-                  <SelectItem value="A-roof">頂樓</SelectItem>
-                  <SelectItem value="A-1F">1F</SelectItem>
-                  <SelectItem value="A-2F">2F</SelectItem>
-                  <SelectItem value="A-3F">3F</SelectItem>
-                  <SelectItem value="A-4F">4F</SelectItem>
-                  <SelectItem value="A-5F">5F</SelectItem>
-                  <SelectItem value="A-6F">6F</SelectItem>
-                  <SelectItem value="A-7F">7F</SelectItem>
-                  <SelectItem value="A-8F">8F</SelectItem>
-                  <SelectItem value="A-9F">9F</SelectItem>
-                  <SelectItem value="A-10F">10F</SelectItem>
+                  <SelectItem value="A-lobby">
+                    菲儷大廳 {hasReports("A-lobby") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-lobby")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-stairs">
+                    藝術梯廳 {hasReports("A-stairs") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-stairs")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-reading">
+                    敦峰閱覽室 {hasReports("A-reading") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-reading")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-kids">
+                    小王子親子共讀區 {hasReports("A-kids") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-kids")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-emergency">
+                    安全梯間 {hasReports("A-emergency") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-emergency")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-elevator">
+                    梯廳 {hasReports("A-elevator") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-elevator")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-roof">
+                    頂樓 {hasReports("A-roof") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-roof")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-1F">
+                    1F {hasReports("A-1F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-1F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-2F">
+                    2F {hasReports("A-2F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-2F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-3F">
+                    3F {hasReports("A-3F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-3F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-4F">
+                    4F {hasReports("A-4F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-4F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-5F">
+                    5F {hasReports("A-5F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-5F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-6F">
+                    6F {hasReports("A-6F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-6F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-7F">
+                    7F {hasReports("A-7F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-7F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-8F">
+                    8F {hasReports("A-8F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-8F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-9F">
+                    9F {hasReports("A-9F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-9F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="A-10F">
+                    10F {hasReports("A-10F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("A-10F")}筆回報</Badge>}
+                  </SelectItem>
                 </>
               )}
               {building === 'B' && (
@@ -130,24 +204,60 @@ export function CategorySelectionSection({
               )}
               {building === 'D' && (
                 <>
-                  <SelectItem value="D-lobby">伯爵大廳</SelectItem>
-                  <SelectItem value="D-view">綠中海景觀區</SelectItem>
-                  <SelectItem value="D-stairs">藝術梯廳</SelectItem>
-                  <SelectItem value="D-gym">海力士健身房</SelectItem>
-                  <SelectItem value="D-emergency">安全梯間</SelectItem>
-                  <SelectItem value="D-elevator">梯廳</SelectItem>
-                  <SelectItem value="D-roof">頂樓</SelectItem>
-                  <SelectItem value="D-1F">1F</SelectItem>
-                  <SelectItem value="D-2F">2F</SelectItem>
-                  <SelectItem value="D-3F">3F</SelectItem>
-                  <SelectItem value="D-4F">4F</SelectItem>
-                  <SelectItem value="D-5F">5F</SelectItem>
-                  <SelectItem value="D-6F">6F</SelectItem>
-                  <SelectItem value="D-7F">7F</SelectItem>
-                  <SelectItem value="D-8F">8F</SelectItem>
-                  <SelectItem value="D-9F">9F</SelectItem>
-                  <SelectItem value="D-10F">10F</SelectItem>
-                  <SelectItem value="D-11F">11F</SelectItem>
+                  <SelectItem value="D-lobby">
+                    伯爵大廳 {hasReports("D-lobby") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-lobby")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-view">
+                    綠中海景觀區 {hasReports("D-view") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-view")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-stairs">
+                    藝術梯廳 {hasReports("D-stairs") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-stairs")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-gym">
+                    海力士健身房 {hasReports("D-gym") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-gym")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-emergency">
+                    安全梯間 {hasReports("D-emergency") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-emergency")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-elevator">
+                    梯廳 {hasReports("D-elevator") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-elevator")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-roof">
+                    頂樓 {hasReports("D-roof") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-roof")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-1F">
+                    1F {hasReports("D-1F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-1F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-2F">
+                    2F {hasReports("D-2F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-2F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-3F">
+                    3F {hasReports("D-3F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-3F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-4F">
+                    4F {hasReports("D-4F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-4F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-5F">
+                    5F {hasReports("D-5F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-5F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-6F">
+                    6F {hasReports("D-6F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-6F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-7F">
+                    7F {hasReports("D-7F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-7F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-8F">
+                    8F {hasReports("D-8F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-8F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-9F">
+                    9F {hasReports("D-9F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-9F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-10F">
+                    10F {hasReports("D-10F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-10F")}筆回報</Badge>}
+                  </SelectItem>
+                  <SelectItem value="D-11F">
+                    11F {hasReports("D-11F") && <Badge className="ml-2 bg-yellow-500" variant="secondary">已有{getReportCount("D-11F")}筆回報</Badge>}
+                  </SelectItem>
                 </>
               )}
               {building === 'E' && (

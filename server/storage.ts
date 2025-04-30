@@ -5,6 +5,14 @@ import { eq } from "drizzle-orm";
 // modify the interface with any CRUD methods
 // you might need
 
+// 表示位置報告狀態的介面
+export interface LocationStatus {
+  building: string;
+  location: string;
+  reportCount: number;
+  latestReportDate: string | null;
+}
+
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -12,6 +20,7 @@ export interface IStorage {
   createReport(report: InsertReport): Promise<Report>;
   getReportById(id: number): Promise<Report | undefined>;
   getAllReports(): Promise<Report[]>;
+  getLocationReportStatus(): Promise<LocationStatus[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -93,6 +102,44 @@ export class DatabaseStorage implements IStorage {
 
   async getAllReports(): Promise<Report[]> {
     return await db.select().from(reports).orderBy(reports.createdAt);
+  }
+  
+  async getLocationReportStatus(): Promise<LocationStatus[]> {
+    try {
+      const client = await pool.connect();
+      
+      try {
+        // 使用原生 SQL 查詢來獲取按位置分組的報告狀態
+        const query = `
+          SELECT 
+            building, 
+            location, 
+            COUNT(*) as report_count, 
+            MAX(created_at) as latest_report_date
+          FROM 
+            cr_reports
+          GROUP BY 
+            building, location
+          ORDER BY 
+            building, location
+        `;
+        
+        const result = await client.query(query);
+        
+        // 將結果轉換為 LocationStatus 對象數組
+        return result.rows.map(row => ({
+          building: row.building,
+          location: row.location,
+          reportCount: parseInt(row.report_count),
+          latestReportDate: row.latest_report_date ? new Date(row.latest_report_date).toISOString() : null
+        }));
+      } finally {
+        client.release();
+      }
+    } catch (error) {
+      console.error("Error getting location report status:", error);
+      throw error;
+    }
   }
 }
 

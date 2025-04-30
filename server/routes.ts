@@ -119,6 +119,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(500).json({ message: "Failed to fetch report" });
     }
   });
+  
+  // Get location report status (for showing which locations already have reports)
+  app.get("/api/locations/status", async (_req: Request, res: Response) => {
+    try {
+      const locationStatus = await storage.getLocationReportStatus();
+      return res.json({ locationStatus });
+    } catch (error) {
+      console.error("Error fetching location status:", error);
+      return res.status(500).json({ message: "Failed to fetch location status" });
+    }
+  });
 
   const httpServer = createServer(app);
 
