@@ -2,7 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { reports, users } from "@shared/schema";
 import { sql } from "drizzle-orm";
 
