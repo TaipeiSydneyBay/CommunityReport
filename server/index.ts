@@ -2,6 +2,9 @@ import express, { type Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { db } from "./db";
+import { reports, users } from "@shared/schema";
+import { sql } from "drizzle-orm";
 
 dotenv.config();
 
@@ -40,6 +43,38 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // 創建必要的資料表
+  try {
+    log("嘗試建立資料表...", "database");
+    
+    // 建立 users 表
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS cr_users (
+        id SERIAL PRIMARY KEY,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL
+      )
+    `);
+    
+    // 建立 reports 表
+    await db.execute(sql`
+      CREATE TABLE IF NOT EXISTS cr_reports (
+        id SERIAL PRIMARY KEY,
+        building TEXT NOT NULL,
+        location TEXT NOT NULL,
+        report_type TEXT NOT NULL,
+        description TEXT NOT NULL,
+        contact TEXT NOT NULL,
+        photos TEXT[] NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    log("資料表已成功建立或已存在", "database");
+  } catch (error) {
+    log(`建立資料表時出錯: ${error}`, "database");
+  }
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
