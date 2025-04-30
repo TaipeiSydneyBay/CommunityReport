@@ -1,5 +1,5 @@
 import { users, reports, type User, type InsertUser, type Report, type InsertReport } from "@shared/schema";
-import { db } from "./db";
+import { db, pool } from "./db";
 import { eq } from "drizzle-orm";
 
 // modify the interface with any CRUD methods
