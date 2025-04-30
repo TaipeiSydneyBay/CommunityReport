@@ -47,30 +47,39 @@ app.use((req, res, next) => {
   try {
     log("嘗試建立資料表...", "database");
     
-    // 建立 users 表
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS cr_users (
-        id SERIAL PRIMARY KEY,
-        username TEXT NOT NULL,
-        password TEXT NOT NULL
-      )
-    `);
+    // 直接使用 pool 來執行 SQL 查詢
+    const client = await pool.connect();
     
-    // 建立 reports 表
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS cr_reports (
-        id SERIAL PRIMARY KEY,
-        building TEXT NOT NULL,
-        location TEXT NOT NULL,
-        report_type TEXT NOT NULL,
-        description TEXT NOT NULL,
-        contact TEXT NOT NULL,
-        photos TEXT[] NOT NULL,
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    
-    log("資料表已成功建立或已存在", "database");
+    try {
+      // 建立 users 表
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS cr_users (
+          id SERIAL PRIMARY KEY,
+          username TEXT NOT NULL,
+          password TEXT NOT NULL
+        )
+      `);
+      
+      // 建立 reports 表
+      await client.query(`
+        CREATE TABLE IF NOT EXISTS cr_reports (
+          id SERIAL PRIMARY KEY,
+          building TEXT NOT NULL,
+          location TEXT NOT NULL,
+          report_type TEXT NOT NULL,
+          description TEXT NOT NULL,
+          contact TEXT NOT NULL,
+          photos TEXT[] NOT NULL,
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      
+      log("資料表已成功建立或已存在", "database");
+    } catch (err) {
+      log(`執行 SQL 查詢時出錯: ${err}`, "database");
+    } finally {
+      client.release();
+    }
   } catch (error) {
     log(`建立資料表時出錯: ${error}`, "database");
   }
