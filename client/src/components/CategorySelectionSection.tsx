@@ -30,7 +30,7 @@ export function CategorySelectionSection({
   setReportType 
 }: CategorySelectionSectionProps) {
   // 使用 React Query 獲取所有位置的報告狀態
-  const { data: locationsData, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['/api/locations/status'],
     staleTime: 60000, // 1分鐘內不重新獲取
   });
@@ -39,14 +39,16 @@ export function CategorySelectionSection({
   const [locationStatusMap, setLocationStatusMap] = useState<Record<string, LocationStatus>>({});
   
   useEffect(() => {
-    if (locationsData?.locationStatus) {
+    // 確保 data 是有效的格式，並且包含 locationStatus 陣列
+    const locationStatus = data && 'locationStatus' in data ? (data.locationStatus as LocationStatus[]) : [];
+    if (locationStatus.length > 0) {
       const statusMap: Record<string, LocationStatus> = {};
-      locationsData.locationStatus.forEach((status: LocationStatus) => {
+      locationStatus.forEach((status: LocationStatus) => {
         statusMap[status.location] = status;
       });
       setLocationStatusMap(statusMap);
     }
-  }, [locationsData]);
+  }, [data]);
   
   // 判斷某位置是否有報告
   const hasReports = (locationId: string) => {
