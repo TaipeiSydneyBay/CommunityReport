@@ -31,14 +31,32 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createReport(report: InsertReport): Promise<Report> {
-    // Ensure photos is correctly cast as string[] for database storage
-    const reportData = {
-      ...report,
-      photos: report.photos as unknown as string[]
-    };
+    // 修正 photos 字段，從 JSON 字符串到 PostgreSQL 數組的轉換
+    // 使用 raw SQL 查詢來避免數組格式問題
+    const query = `
+      INSERT INTO cr_reports (building, location, report_type, description, contact, photos, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, DEFAULT)
+      RETURNING *
+    `;
+
+    // 將照片從 JSON 數組轉換為 PostgreSQL 數組格式
+    const photosStr = `{${report.photos.map(p => `"${p}"`).join(',')}}`;
+
+    const result = await db.execute(query, [
+      report.building,
+      report.location,
+      report.reportType,
+      report.description,
+      report.contact,
+      photosStr,
+    ]);
     
-    const [newReport] = await db.insert(reports).values(reportData).returning();
-    return newReport;
+    // 確保我們有結果
+    if (result.length === 0) {
+      throw new Error('Failed to create report');
+    }
+    
+    return result[0] as unknown as Report;
   }
 
   async getReportById(id: number): Promise<Report | undefined> {
