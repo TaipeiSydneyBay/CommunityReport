@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRoute, Link } from 'wouter';
 import { format } from 'date-fns';
 import { ArrowLeft, Calendar, MapPin, FileType, AlignLeft, User, Camera } from 'lucide-react';
+import { locationLabels } from '@/components/CategorySelectionSection';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -115,7 +116,7 @@ export default function ReportDetail() {
                   <div className="flex items-center space-x-2">
                     <Badge variant="secondary">{report.building}</Badge>
                     <span className="text-gray-400">•</span>
-                    <span className="font-medium">{report.location}</span>
+                    <span className="font-medium">{locationLabels[report.location] || report.location}</span>
                   </div>
                 </div>
 
