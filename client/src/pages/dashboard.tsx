@@ -66,10 +66,10 @@ const buildingOptions = [
 
 // 位置對照表
 const locationMap: Record<string, string> = {
-  'E-bar': 'E 棟-美式運動BAR',
-  'G-4F': 'G 棟-4樓',
-  'B-1F': 'B 棟-1樓',
-  'parking-B1': '停車場-B1'
+  'E-bar': '美式運動BAR',
+  'G-4F': '4F',
+  'B-1F': '1F',
+  'parking-B1': 'B1停車場'
 };
 
 export default function Dashboard() {
