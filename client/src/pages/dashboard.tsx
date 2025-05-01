@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'wouter';
 import { Eye } from 'lucide-react';
+import { locationLabels } from '@/components/CategorySelectionSection';
 import {
   Card,
   CardContent,
@@ -64,13 +65,7 @@ const buildingOptions = [
   '停車場'
 ];
 
-// 位置對照表
-const locationMap: Record<string, string> = {
-  'E-bar': '美式運動BAR',
-  'G-4F': '4F',
-  'B-1F': '1F',
-  'parking-B1': 'B1停車場'
-};
+// 使用從 CategorySelectionSection 導入的對照表
 
 export default function Dashboard() {
   const [selectedBuilding, setSelectedBuilding] = useState('全部');
@@ -180,7 +175,7 @@ export default function Dashboard() {
                 <CardHeader className="bg-gray-50">
                   <div className="flex justify-between items-center">
                     <div>
-                      <CardTitle className="text-xl">{location}</CardTitle>
+                      <CardTitle className="text-xl">{locationLabels[location] || location}</CardTitle>
                       <CardDescription className="text-sm mt-1">
                         <span className="inline-flex items-center">
                           <Badge variant="secondary" className="mr-2">{firstReport.building}</Badge>

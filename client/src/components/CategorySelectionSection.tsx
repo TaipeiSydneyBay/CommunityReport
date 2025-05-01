@@ -4,6 +4,201 @@ import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 
+// 匯出位置對照表，供其他組件使用
+export const locationLabels: Record<string, string> = {
+  // A 棟
+  'A-lobby': '菲儷大廳',
+  'A-stairs': '藝術梯廳',
+  'A-reading': '敦峰閱覽室',
+  'A-kids': '小王子親子共讀區',
+  'A-emergency': '安全梯間',
+  'A-elevator': '梯廳',
+  'A-roof': '頂樓',
+  'A-1F': '1F',
+  'A-2F': '2F',
+  'A-3F': '3F',
+  'A-4F': '4F',
+  'A-5F': '5F',
+  'A-6F': '6F',
+  'A-7F': '7F',
+  'A-8F': '8F',
+  'A-9F': '9F',
+  'A-10F': '10F',
+  
+  // B 棟
+  'B-lobby': '琴韻大廳',
+  'B-hall': '安幔交誼廳',
+  'B-stairs': '藝術梯廳',
+  'B-reading': '人文閱讀館',
+  'B-emergency': '安全梯間',
+  'B-elevator': '梯廳',
+  'B-roof': '頂樓',
+  'B-1F': '1F',
+  'B-2F': '2F',
+  'B-3F': '3F',
+  'B-4F': '4F',
+  'B-5F': '5F',
+  'B-6F': '6F',
+  'B-7F': '7F',
+  'B-8F': '8F',
+  'B-9F': '9F',
+  'B-10F': '10F',
+  
+  // C 棟
+  'C-tunnel': '多倫圖書隧道',
+  'C-classroom': '多媒體雙語教室',
+  'C-study': '集雅學學區',
+  'C-reading': '松濤閱讀館',
+  'C-emergency': '安全梯間',
+  'C-elevator': '梯廳',
+  'C-roof': '頂樓',
+  'C-1F': '1F',
+  'C-2F': '2F',
+  'C-3F': '3F',
+  'C-4F': '4F',
+  'C-5F': '5F',
+  'C-6F': '6F',
+  'C-7F': '7F',
+  'C-8F': '8F',
+  'C-9F': '9F',
+  'C-10F': '10F',
+  'C-11F': '11F',
+  
+  // D 棟
+  'D-lobby': '伯爵大廳',
+  'D-kitchen': '歐風廚房',
+  'D-emergency': '安全梯間',
+  'D-elevator': '梯廳',
+  'D-roof': '頂樓',
+  'D-1F': '1F',
+  'D-2F': '2F',
+  'D-3F': '3F',
+  'D-4F': '4F',
+  'D-5F': '5F',
+  'D-6F': '6F',
+  'D-7F': '7F',
+  'D-8F': '8F',
+  'D-9F': '9F',
+  'D-10F': '10F',
+  'D-11F': '11F',
+  
+  // E 棟
+  'E-bar': '美式運動BAR',
+  'E-cinema': '光影視聽室',
+  'E-emergency': '安全梯間',
+  'E-elevator': '梯廳',
+  'E-roof': '頂樓',
+  'E-1F': '1F',
+  'E-2F': '2F',
+  'E-3F': '3F',
+  'E-4F': '4F',
+  'E-5F': '5F',
+  'E-6F': '6F',
+  'E-7F': '7F',
+  'E-8F': '8F',
+  'E-9F': '9F',
+  'E-10F': '10F',
+  'E-11F': '11F',
+  
+  // F 棟
+  'F-lounge': '雲端沙龍',
+  'F-yoga': '靜修瑜珈',
+  'F-emergency': '安全梯間',
+  'F-elevator': '梯廳',
+  'F-roof': '頂樓',
+  'F-1F': '1F',
+  'F-2F': '2F',
+  'F-3F': '3F',
+  'F-4F': '4F',
+  'F-5F': '5F',
+  'F-6F': '6F',
+  'F-7F': '7F',
+  'F-8F': '8F',
+  'F-9F': '9F',
+  'F-10F': '10F',
+  'F-11F': '11F',
+  
+  // G 棟
+  'G-reception': '接待大廳',
+  'G-gym': '有氧健身房',
+  'G-emergency': '安全梯間',
+  'G-elevator': '梯廳',
+  'G-roof': '頂樓',
+  'G-1F': '1F',
+  'G-2F': '2F',
+  'G-3F': '3F',
+  'G-4F': '4F',
+  'G-5F': '5F',
+  'G-6F': '6F',
+  'G-7F': '7F',
+  'G-8F': '8F',
+  'G-9F': '9F',
+  'G-10F': '10F',
+  'G-11F': '11F',
+  
+  // H 棟
+  'H-lobby': '奇幻大廳',
+  'H-garden': '空中花園',
+  'H-emergency': '安全梯間',
+  'H-elevator': '梯廳',
+  'H-roof': '頂樓',
+  'H-1F': '1F',
+  'H-2F': '2F',
+  'H-3F': '3F',
+  'H-4F': '4F',
+  'H-5F': '5F',
+  'H-6F': '6F',
+  'H-7F': '7F',
+  'H-8F': '8F',
+  'H-9F': '9F',
+  'H-10F': '10F',
+  
+  // I 棟
+  'I-pool': '無邊際泳池',
+  'I-spa': '渡假SPA',
+  'I-emergency': '安全梯間',
+  'I-elevator': '梯廳',
+  'I-roof': '頂樓',
+  'I-1F': '1F',
+  'I-2F': '2F',
+  'I-3F': '3F',
+  'I-4F': '4F',
+  'I-5F': '5F',
+  'I-6F': '6F',
+  'I-7F': '7F',
+  'I-8F': '8F',
+  'I-9F': '9F',
+  
+  // J 棟
+  'J-entrance': '尊爵入口',
+  'J-terrace': '觀景露臺',
+  'J-emergency': '安全梯間',
+  'J-elevator': '梯廳',
+  'J-roof': '頂樓',
+  'J-1F': '1F',
+  'J-2F': '2F',
+  'J-3F': '3F',
+  'J-4F': '4F',
+  'J-5F': '5F',
+  'J-6F': '6F',
+  'J-7F': '7F',
+  'J-8F': '8F',
+  
+  // 戶外公設
+  'outdoor-garden': '中庭花園',
+  'outdoor-walkway': '步道',
+  'outdoor-playground': '兒童遊戲區',
+  'outdoor-pavilion': '涼亭',
+  'outdoor-bbq': 'BBQ區',
+  'outdoor-other': '其他公共設施',
+  
+  // 停車場
+  'parking-B1': 'B1停車場',
+  'parking-B2': 'B2停車場',
+  'parking-B3': 'B3停車場',
+  'parking-outdoor': '戶外停車場'
+};
+
 interface CategorySelectionSectionProps {
   building: string;
   setBuilding: (value: string) => void;
@@ -40,7 +235,7 @@ export function CategorySelectionSection({
   
   useEffect(() => {
     // 確保 data 是有效的格式，並且包含 locationStatus 陣列
-    const locationStatus = data && 'locationStatus' in data ? (data.locationStatus as LocationStatus[]) : [];
+    const locationStatus = data && typeof data === 'object' && 'locationStatus' in data ? (data.locationStatus as LocationStatus[]) : [];
     if (locationStatus.length > 0) {
       const statusMap: Record<string, LocationStatus> = {};
       locationStatus.forEach((status: LocationStatus) => {
