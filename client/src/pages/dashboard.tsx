@@ -191,7 +191,7 @@ export default function Dashboard() {
                       <TableRow>
                         <TableHead>ID</TableHead>
                         <TableHead>回報類型</TableHead>
-                        <TableHead>描述</TableHead>
+                        <TableHead>問題描述</TableHead>
                         <TableHead>照片</TableHead>
                         <TableHead>日期</TableHead>
                         <TableHead>操作</TableHead>
