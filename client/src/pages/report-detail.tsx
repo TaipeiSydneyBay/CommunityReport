@@ -24,11 +24,11 @@ const reportTypeMap: Record<string, string> = {
   'ceiling_wall_floor': '天地壁',
   'socket_switch': '插座/開關',
   'paint': '油漆',
-  'equip_install_location': '設備安裝位置',
+  'equipment_location': '設備安裝位置',
   'cleaning': '清潔',
   'water_leakage': '漏水',
-  'blueprint_mismatch': '與圖面不符之重大瑕疵',
-  'other': '其他'
+  'major_defect': '與圖面不符之重大短缺',
+  'other_marked': '其他-請在圖面標註類型'
 };
 
 export default function ReportDetail() {
