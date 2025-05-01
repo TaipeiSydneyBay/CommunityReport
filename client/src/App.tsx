@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Report from "@/pages/report";
 import Dashboard from "@/pages/dashboard";
+import ReportDetail from "@/pages/report-detail";
 import { Navbar } from "@/components/Navbar";
 
 function Router() {
@@ -18,6 +19,7 @@ function Router() {
           <Route path="/" component={Home} />
           <Route path="/report" component={Report} />
           <Route path="/dashboard" component={Dashboard} />
+          <Route path="/report/:id" component={ReportDetail} />
           <Route component={NotFound} />
         </Switch>
       </div>

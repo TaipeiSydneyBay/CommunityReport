@@ -165,91 +165,102 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="space-y-10">
-          {locations.map(location => (
-            <Card key={location} className="overflow-hidden">
-              <CardHeader className="bg-gray-50">
-                <div className="flex justify-between items-center">
-                  <CardTitle className="text-xl">{location}</CardTitle>
-                  <Badge variant="outline" className="ml-2">
-                    {reportsByLocation[location].length} 筆回報
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="p-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>回報類型</TableHead>
-                      <TableHead>描述</TableHead>
-                      <TableHead>照片</TableHead>
-                      <TableHead>日期</TableHead>
-                      <TableHead>操作</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {reportsByLocation[location].map((report) => (
-                      <TableRow key={report.id}>
-                        <TableCell className="font-medium">{report.id}</TableCell>
-                        <TableCell>
-                          <Badge variant="secondary">
-                            {{
-                              'wall_ceiling_floor': '天地壁',
-                              'socket_switch': '插座/開關',
-                              'paint': '油漆',
-                              'equipment_position': '設備安裝位置',
-                              'cleaning': '清潔',
-                              'water_leakage': '漏水',
-                              'major_defect': '與圖面不符之重大瑕疵',
-                              'other': '其他'
-                            }[report.reportType] || report.reportType}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="max-w-md truncate">{report.description}</TableCell>
-                        <TableCell>
-                          {report.photos && report.photos.length > 0 ? (
-                            <div className="flex space-x-1">
-                              {report.photos.slice(0, 2).map((url: string, idx: number) => (
-                                <a 
-                                  key={idx} 
-                                  href={url} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="block w-10 h-10 rounded overflow-hidden border border-gray-200"
-                                >
-                                  <img 
-                                    src={url} 
-                                    alt={`照片 ${idx + 1}`} 
-                                    className="w-full h-full object-cover"
-                                  />
-                                </a>
-                              ))}
-                              {report.photos.length > 2 && (
-                                <span className="text-sm text-gray-500">+{report.photos.length - 2}</span>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-gray-400 text-sm">無照片</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-gray-500 text-sm">
-                          {format(new Date(report.createdAt), 'yyyy/MM/dd HH:mm')}
-                        </TableCell>
-                        <TableCell>
-                          <Link href={`/report/${report.id}`}>
-                            <button className="flex items-center text-blue-500 hover:text-blue-700 text-sm font-medium">
-                              <Eye className="h-4 w-4 mr-1" />
-                              查看詳情
-                            </button>
-                          </Link>
-                        </TableCell>
+          {locations.map(location => {
+            const firstReport = reportsByLocation[location][0];
+            return (
+              <Card key={location} className="overflow-hidden">
+                <CardHeader className="bg-gray-50">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle className="text-xl">{location}</CardTitle>
+                      <CardDescription className="text-sm mt-1">
+                        <span className="inline-flex items-center">
+                          <Badge variant="secondary" className="mr-2">{firstReport.building}</Badge>
+                          最新回報日期: {format(new Date(firstReport.createdAt), 'yyyy/MM/dd')}
+                        </span>
+                      </CardDescription>
+                    </div>
+                    <Badge variant="outline" className="ml-2">
+                      {reportsByLocation[location].length} 筆回報
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>回報類型</TableHead>
+                        <TableHead>描述</TableHead>
+                        <TableHead>照片</TableHead>
+                        <TableHead>日期</TableHead>
+                        <TableHead>操作</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          ))}
+                    </TableHeader>
+                    <TableBody>
+                      {reportsByLocation[location].map((report) => (
+                        <TableRow key={report.id}>
+                          <TableCell className="font-medium">{report.id}</TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {{
+                                'wall_ceiling_floor': '天地壁',
+                                'socket_switch': '插座/開關',
+                                'paint': '油漆',
+                                'equipment_position': '設備安裝位置',
+                                'cleaning': '清潔',
+                                'water_leakage': '漏水',
+                                'major_defect': '與圖面不符之重大瑕疵',
+                                'other': '其他'
+                              }[report.reportType] || report.reportType}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="max-w-md truncate">{report.description}</TableCell>
+                          <TableCell>
+                            {report.photos && report.photos.length > 0 ? (
+                              <div className="flex space-x-1">
+                                {report.photos.slice(0, 2).map((url: string, idx: number) => (
+                                  <a 
+                                    key={idx} 
+                                    href={url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="block w-10 h-10 rounded overflow-hidden border border-gray-200"
+                                  >
+                                    <img 
+                                      src={url} 
+                                      alt={`照片 ${idx + 1}`} 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  </a>
+                                ))}
+                                {report.photos.length > 2 && (
+                                  <span className="text-sm text-gray-500">+{report.photos.length - 2}</span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-sm">無照片</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-gray-500 text-sm">
+                            {format(new Date(report.createdAt), 'yyyy/MM/dd HH:mm')}
+                          </TableCell>
+                          <TableCell>
+                            <Link href={`/report/${report.id}`}>
+                              <button className="flex items-center text-blue-500 hover:text-blue-700 text-sm font-medium">
+                                <Eye className="h-4 w-4 mr-1" />
+                                查看詳情
+                              </button>
+                            </Link>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
