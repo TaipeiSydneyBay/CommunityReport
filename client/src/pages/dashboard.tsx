@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'wouter';
+import { Eye } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -182,6 +184,7 @@ export default function Dashboard() {
                       <TableHead>描述</TableHead>
                       <TableHead>照片</TableHead>
                       <TableHead>日期</TableHead>
+                      <TableHead>操作</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -190,7 +193,16 @@ export default function Dashboard() {
                         <TableCell className="font-medium">{report.id}</TableCell>
                         <TableCell>
                           <Badge variant="secondary">
-                            {report.reportType}
+                            {{
+                              'wall_ceiling_floor': '天地壁',
+                              'socket_switch': '插座/開關',
+                              'paint': '油漆',
+                              'equipment_position': '設備安裝位置',
+                              'cleaning': '清潔',
+                              'water_leakage': '漏水',
+                              'major_defect': '與圖面不符之重大瑕疵',
+                              'other': '其他'
+                            }[report.reportType] || report.reportType}
                           </Badge>
                         </TableCell>
                         <TableCell className="max-w-md truncate">{report.description}</TableCell>
@@ -222,6 +234,14 @@ export default function Dashboard() {
                         </TableCell>
                         <TableCell className="text-gray-500 text-sm">
                           {format(new Date(report.createdAt), 'yyyy/MM/dd HH:mm')}
+                        </TableCell>
+                        <TableCell>
+                          <Link href={`/report/${report.id}`}>
+                            <button className="flex items-center text-blue-500 hover:text-blue-700 text-sm font-medium">
+                              <Eye className="h-4 w-4 mr-1" />
+                              查看詳情
+                            </button>
+                          </Link>
                         </TableCell>
                       </TableRow>
                     ))}

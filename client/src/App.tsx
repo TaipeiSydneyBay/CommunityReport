@@ -7,15 +7,21 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Report from "@/pages/report";
 import Dashboard from "@/pages/dashboard";
+import { Navbar } from "@/components/Navbar";
 
 function Router() {
   return (
-    <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/report" component={Report} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route component={NotFound} />
-    </Switch>
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <div className="flex-grow">
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/report" component={Report} />
+          <Route path="/dashboard" component={Dashboard} />
+          <Route component={NotFound} />
+        </Switch>
+      </div>
+    </div>
   );
 }
 
