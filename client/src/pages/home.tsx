@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Link } from "wouter";
-import { BarChart, Clipboard, Camera, Send } from "lucide-react";
+import { BarChart, Clipboard, Camera, Send, PieChart } from "lucide-react";
 
 export default function Home() {
   return (
@@ -12,17 +12,34 @@ export default function Home() {
           <p className="text-gray-600 mt-2">提交回報改善以解決社區問題</p>
         </div>
 
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>新增回報改善</CardTitle>
-            <CardDescription>提交社區問題改善報告</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/report">
-              <Button className="w-full">開始回報改善</Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>新增回報改善</CardTitle>
+              <CardDescription>提交社區問題改善報告</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/report">
+                <Button className="w-full">開始回報改善</Button>
+              </Link>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>查看回報儀表板</CardTitle>
+              <CardDescription>瀏覽所有社區回報統計</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/dashboard">
+                <Button className="w-full" variant="outline">
+                  <PieChart className="h-4 w-4 mr-2" />
+                  查看儀表板
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
 
         <div className="grid grid-cols-1 gap-4 mb-8">
           <Card>

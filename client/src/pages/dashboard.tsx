@@ -41,7 +41,7 @@ interface Report {
   reportType: string;
   description: string;
   contact: string;
-  photoUrls: string[];
+  photos: string[];
   createdAt: string;
 }
 
@@ -195,9 +195,9 @@ export default function Dashboard() {
                         </TableCell>
                         <TableCell className="max-w-md truncate">{report.description}</TableCell>
                         <TableCell>
-                          {report.photoUrls && report.photoUrls.length > 0 ? (
+                          {report.photos && report.photos.length > 0 ? (
                             <div className="flex space-x-1">
-                              {report.photoUrls.slice(0, 2).map((url, idx) => (
+                              {report.photos.slice(0, 2).map((url: string, idx: number) => (
                                 <a 
                                   key={idx} 
                                   href={url} 
@@ -212,8 +212,8 @@ export default function Dashboard() {
                                   />
                                 </a>
                               ))}
-                              {report.photoUrls.length > 2 && (
-                                <span className="text-sm text-gray-500">+{report.photoUrls.length - 2}</span>
+                              {report.photos.length > 2 && (
+                                <span className="text-sm text-gray-500">+{report.photos.length - 2}</span>
                               )}
                             </div>
                           ) : (
