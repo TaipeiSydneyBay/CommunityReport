@@ -1,11 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useRoute, Link } from 'wouter';
-import { format } from 'date-fns';
-import { ArrowLeft, Calendar, MapPin, FileType, AlignLeft, User, Camera } from 'lucide-react';
-import { locationLabels } from '@/components/CategorySelectionSection';
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useRoute, Link } from "wouter";
+import { format } from "date-fns";
+import {
+  ArrowLeft,
+  Calendar,
+  MapPin,
+  FileType,
+  AlignLeft,
+  User,
+  Camera,
+} from "lucide-react";
+import { locationLabels } from "@/components/CategorySelectionSection";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
@@ -22,23 +36,27 @@ interface Report {
 
 // 報告類型中文對照表
 const reportTypeMap: Record<string, string> = {
-  'ceiling_wall_floor': '天地壁',
-  'socket_switch': '插座/開關',
-  'paint': '油漆',
-  'equipment_location': '設備安裝位置',
-  'cleaning': '清潔',
-  'water_leakage': '漏水',
-  'major_defect': '與圖面不符之重大短缺',
-  'other_marked': '其他-請在圖面標註類型'
+  ceiling_wall_floor: "天地壁",
+  socket_switch: "插座/開關",
+  paint: "油漆",
+  equipment_location: "設備安裝位置",
+  cleaning: "清潔",
+  water_leakage: "漏水",
+  major_defect: "與圖面不符之重大短缺",
+  other_marked: "其他-請在圖面標註類型",
 };
 
 export default function ReportDetail() {
-  const [, params] = useRoute('/report/:id');
+  const [, params] = useRoute("/report/:id");
   const reportId = params?.id;
-  
-  const { data: report, isLoading, isError } = useQuery<Report>({
+
+  const {
+    data: report,
+    isLoading,
+    isError,
+  } = useQuery<Report>({
     queryKey: [`/api/reports/${reportId}`],
-    enabled: !!reportId
+    enabled: !!reportId,
   });
 
   if (isLoading) {
@@ -96,11 +114,11 @@ export default function ReportDetail() {
                 </CardTitle>
                 <CardDescription className="mt-1 flex items-center">
                   <Calendar className="h-4 w-4 mr-1 text-gray-400" />
-                  {format(new Date(report.createdAt), 'yyyy/MM/dd HH:mm')}
+                  {format(new Date(report.createdAt), "yyyy/MM/dd HH:mm")}
                 </CardDescription>
               </div>
               <Badge className="text-sm" variant="outline">
-                {`CR-${new Date(report.createdAt).getFullYear()}-${String(report.id).padStart(4, '0')}`}
+                {`CR-${new Date(report.createdAt).getFullYear()}-${String(report.id).padStart(4, "0")}`}
               </Badge>
             </div>
           </CardHeader>
@@ -114,9 +132,9 @@ export default function ReportDetail() {
                 </h3>
                 <div className="mb-4">
                   <div className="flex items-center space-x-2">
-                    <Badge variant="secondary">{report.building}</Badge>
-                    <span className="text-gray-400">•</span>
-                    <span className="font-medium">{locationLabels[report.location] || report.location}</span>
+                    <span className="font-medium">
+                      {locationLabels[report.location] || report.location}
+                    </span>
                   </div>
                 </div>
 
@@ -135,7 +153,9 @@ export default function ReportDetail() {
                   問題描述
                 </h3>
                 <div className="mb-4 p-3 bg-gray-50 rounded-md border border-gray-100">
-                  <p className="whitespace-pre-wrap text-gray-700">{report.description}</p>
+                  <p className="whitespace-pre-wrap text-gray-700">
+                    {report.description}
+                  </p>
                 </div>
 
                 {report.contact && (
