@@ -79,58 +79,64 @@ const statusMap: Record<string, { label: string; color: string; icon: any }> = {
   },
 };
 
-// 顯示載入中狀態
-function LoadingView() {
-  return (
-    <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-[60vh]">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-        <p className="mt-4 text-gray-500">載入回報資料中...</p>
-      </div>
+// 專門用來顯示加載中狀態的元件
+const LoadingView = () => (
+  <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-[60vh]">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+      <p className="mt-4 text-gray-500">載入回報資料中...</p>
     </div>
-  );
-}
+  </div>
+);
 
-// 顯示錯誤狀態
-function ErrorView({ reportId }: { reportId: string }) {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <Card className="max-w-3xl mx-auto border-red-200">
-        <CardHeader>
-          <CardTitle className="text-red-500">無法載入回報資料</CardTitle>
-          <CardDescription>
-            找不到 ID 為 {reportId} 的回報記錄，或發生了錯誤。
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Link href="/dashboard">
-            <Button variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              返回儀表板
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+// 專門用來顯示錯誤狀態的元件
+const ErrorView = ({ reportId }: { reportId: string }) => (
+  <div className="container mx-auto px-4 py-8">
+    <Card className="max-w-3xl mx-auto border-red-200">
+      <CardHeader>
+        <CardTitle className="text-red-500">無法載入回報資料</CardTitle>
+        <CardDescription>
+          找不到 ID 為 {reportId} 的回報記錄，或發生了錯誤。
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Link href="/dashboard">
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            返回儀表板
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
+  </div>
+);
 
-// 報告詳情組件
 export default function ReportDetail() {
-  // 路徑參數
+  // 基本狀態與參數
   const [, params] = useRoute("/report/:id");
   const reportId = params?.id;
-  
-  // 本地狀態
   const [statusEditing, setStatusEditing] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [improvementText, setImprovementText] = useState("");
   const [newComment, setNewComment] = useState("");
   const [commenterName, setCommenterName] = useState("");
   
-  // Hooks
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // 預設值
+  const emptyReport: Report = {
+    id: 0,
+    building: '',
+    location: '',
+    reportType: '',
+    description: '',
+    contact: '',
+    photos: [],
+    createdAt: '',
+    status: 'pending',
+    updatedAt: '',
+  };
 
   // 查詢報告資料
   const {
@@ -142,6 +148,10 @@ export default function ReportDetail() {
     enabled: !!reportId,
   });
   
+  // 提取報告和評論
+  const report: Report = data ? ((data as any).report || data || emptyReport) : emptyReport;
+  const comments: Comment[] = data && (data as any).comments ? (data as any).comments : [];
+
   // 狀態更新函數
   const updateStatusMutation = useMutation({
     mutationFn: async (data: { status: string; improvementText?: string }) => {
@@ -185,25 +195,7 @@ export default function ReportDetail() {
       });
     },
   });
-  
-  // 預設空報告
-  const emptyReport: Report = {
-    id: 0,
-    building: '',
-    location: '',
-    reportType: '',
-    description: '',
-    contact: '',
-    photos: [],
-    createdAt: '',
-    status: 'pending',
-    updatedAt: '',
-  };
-  
-  // 提取報告和評論
-  const report = data ? ((data as any).report || data || emptyReport) : emptyReport;
-  const comments = data && (data as any).comments ? (data as any).comments : [];
-  
+
   // 處理狀態更新提交
   const handleStatusUpdate = () => {
     if (!selectedStatus) {
@@ -249,7 +241,7 @@ export default function ReportDetail() {
     });
   };
   
-  // 當報告資料變更時更新狀態和改善文字
+  // 初始加載報告時設置狀態和改善文字
   useEffect(() => {
     if (report && report.id > 0) {
       setSelectedStatus(report.status);
@@ -257,27 +249,22 @@ export default function ReportDetail() {
     }
   }, [report]);
 
-  // 狀態圖示處理
-  const getStatusIcon = () => {
-    if (report && report.status && statusMap[report.status]) {
-      return statusMap[report.status].icon;
-    }
-    return Clock;
-  };
-  
-  const StatusIcon = getStatusIcon();
+  // 進一步設定狀態圖示
+  let StatusIcon = Clock; // 預設圖示
+  if (report && report.status && statusMap[report.status]) {
+    StatusIcon = statusMap[report.status].icon;
+  }
   
   // 加載中狀態
   if (isLoading) {
     return <LoadingView />;
   }
 
-  // 錯誤狀態
+  // 遇到錯誤或沒有有效報告
   if (isError || !report || report.id === 0) {
     return <ErrorView reportId={reportId || ''} />;
   }
 
-  // 主要內容
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
