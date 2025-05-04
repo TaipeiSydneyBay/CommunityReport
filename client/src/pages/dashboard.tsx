@@ -41,7 +41,30 @@ interface Report {
   contact: string;
   photos: string[];
   createdAt: string;
+  status: "pending" | "processing" | "completed" | "rejected";
+  improvementText?: string;
+  updatedAt: string;
 }
+
+// 狀態中文對照表
+const statusMap: Record<string, { label: string, color: string }> = {
+  pending: { 
+    label: "待處理", 
+    color: "bg-yellow-100 text-yellow-800 border-yellow-200", 
+  },
+  processing: { 
+    label: "處理中", 
+    color: "bg-blue-100 text-blue-800 border-blue-200", 
+  },
+  completed: { 
+    label: "已完成", 
+    color: "bg-green-100 text-green-800 border-green-200", 
+  },
+  rejected: { 
+    label: "不處理", 
+    color: "bg-red-100 text-red-800 border-red-200", 
+  },
+};
 
 // 棟別選項
 const buildingOptions = [
@@ -211,6 +234,7 @@ export default function Dashboard() {
                       <TableRow>
                         <TableHead>ID</TableHead>
                         <TableHead>回報類型</TableHead>
+                        <TableHead>狀態</TableHead>
                         <TableHead>問題描述</TableHead>
                         <TableHead>照片</TableHead>
                         <TableHead>日期</TableHead>
@@ -235,6 +259,11 @@ export default function Dashboard() {
                                 major_defect: "與圖面不符之重大短缺",
                                 other_marked: "其他-請在圖面標註類型",
                               }[report.reportType] || report.reportType}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={statusMap[report.status].color} variant="outline">
+                              {statusMap[report.status].label}
                             </Badge>
                           </TableCell>
                           <TableCell className="max-w-md truncate">
