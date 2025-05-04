@@ -1,38 +1,24 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRoute, Link } from "wouter";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import {
-  ArrowLeft,
-  Calendar,
-  MapPin,
-  FileType,
-  AlignLeft,
-  User,
-  Camera,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Wrench,
-  MessageSquare,
-  Send
-} from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
+import { Report, Comment } from "@shared/schema";
 import { locationLabels } from "@/components/CategorySelectionSection";
-import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -41,42 +27,36 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface Report {
-  id: number;
-  building: string;
-  location: string;
-  reportType: string;
-  description: string;
-  contact: string;
-  photos: string[];
-  createdAt: string;
-  status: "pending" | "processing" | "completed" | "rejected";
-  improvementText?: string;
-  updatedAt: string;
-}
+import {
+  ArrowLeft,
+  MessageSquare,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  XCircle,
+  Wrench,
+  Calendar,
+  MapPin,
+  FileType,
+  AlignLeft,
+  User,
+  Camera,
+} from "lucide-react";
 
-interface Comment {
-  id: number;
-  reportId: number;
-  content: string;
-  createdBy: string;
-  createdAt: string;
-}
-
-// 報告類型中文對照表
+// 報告類型中文映射表
 const reportTypeMap: Record<string, string> = {
-  ceiling_wall_floor: "天地壁",
-  socket_switch: "插座/開關",
-  paint: "油漆",
-  equipment_location: "設備安裝位置",
-  cleaning: "清潔",
-  water_leakage: "漏水",
-  major_defect: "與圖面不符之重大短缺",
-  other_marked: "其他-請在圖面標註類型",
+  "wall": "天地壁",
+  "socket": "插座/開關",
+  "paint": "油漆",
+  "position": "設備安裝位置",
+  "clean": "清潔",
+  "water": "漏水",
+  "major": "與圖面不符之重大短缺",
+  "other": "其他-請在圖面標註",
 };
 
-// 狀態中文對照表
-const statusMap: Record<string, { label: string, color: string, icon: any }> = {
+// 狀態對應的標籤與顏色
+const statusMap: Record<string, { label: string; color: string; icon: any }> = {
   pending: { 
     label: "待處理", 
     color: "bg-yellow-100 text-yellow-800 border-yellow-200", 
@@ -85,7 +65,7 @@ const statusMap: Record<string, { label: string, color: string, icon: any }> = {
   processing: { 
     label: "處理中", 
     color: "bg-blue-100 text-blue-800 border-blue-200", 
-    icon: Wrench 
+    icon: AlertCircle 
   },
   completed: { 
     label: "已完成", 
@@ -99,7 +79,40 @@ const statusMap: Record<string, { label: string, color: string, icon: any }> = {
   },
 };
 
+// 專門用來顯示加載中狀態的元件
+const LoadingView = () => (
+  <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-[60vh]">
+    <div className="text-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+      <p className="mt-4 text-gray-500">載入回報資料中...</p>
+    </div>
+  </div>
+);
+
+// 專門用來顯示錯誤狀態的元件
+const ErrorView = ({ reportId }: { reportId: string }) => (
+  <div className="container mx-auto px-4 py-8">
+    <Card className="max-w-3xl mx-auto border-red-200">
+      <CardHeader>
+        <CardTitle className="text-red-500">無法載入回報資料</CardTitle>
+        <CardDescription>
+          找不到 ID 為 {reportId} 的回報記錄，或發生了錯誤。
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Link href="/dashboard">
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            返回儀表板
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
+  </div>
+);
+
 export default function ReportDetail() {
+  // 基本狀態與參數
   const [, params] = useRoute("/report/:id");
   const reportId = params?.id;
   const [statusEditing, setStatusEditing] = useState(false);
@@ -111,6 +124,21 @@ export default function ReportDetail() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // 預設值
+  const emptyReport: Report = {
+    id: 0,
+    building: '',
+    location: '',
+    reportType: '',
+    description: '',
+    contact: '',
+    photos: [],
+    createdAt: '',
+    status: 'pending',
+    updatedAt: '',
+  };
+
+  // 查詢報告資料
   const {
     data,
     isLoading,
@@ -121,44 +149,10 @@ export default function ReportDetail() {
   });
   
   // 提取報告和評論
-  const report: Report | undefined = data ? (data as any).report || data : undefined;
+  const report: Report = data ? ((data as any).report || data || emptyReport) : emptyReport;
   const comments: Comment[] = data && (data as any).comments ? (data as any).comments : [];
 
-  if (isLoading) {
-    return (
-      <div className="container mx-auto px-4 py-8 flex justify-center items-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-500">載入回報資料中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (isError || !report) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-3xl mx-auto border-red-200">
-          <CardHeader>
-            <CardTitle className="text-red-500">無法載入回報資料</CardTitle>
-            <CardDescription>
-              找不到 ID 為 {reportId} 的回報記錄，或發生了錯誤。
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Link href="/dashboard">
-              <Button variant="outline">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                返回儀表板
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // 新增狀態更新函數
+  // 狀態更新函數
   const updateStatusMutation = useMutation({
     mutationFn: async (data: { status: string; improvementText?: string }) => {
       return apiRequest(`/api/reports/${reportId}`, "PATCH", data);
@@ -249,13 +243,27 @@ export default function ReportDetail() {
   
   // 初始加載報告時設置狀態和改善文字
   useEffect(() => {
-    if (report) {
+    if (report && report.id > 0) {
       setSelectedStatus(report.status);
       setImprovementText(report.improvementText || "");
     }
   }, [report]);
 
-  const StatusIcon = report ? statusMap[report.status]?.icon : Clock;
+  // 進一步設定狀態圖示
+  let StatusIcon = Clock; // 預設圖示
+  if (report && report.status && statusMap[report.status]) {
+    StatusIcon = statusMap[report.status].icon;
+  }
+  
+  // 加載中狀態
+  if (isLoading) {
+    return <LoadingView />;
+  }
+
+  // 遇到錯誤或沒有有效報告
+  if (isError || !report || report.id === 0) {
+    return <ErrorView reportId={reportId || ''} />;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -523,12 +531,7 @@ export default function ReportDetail() {
                         <span className="animate-spin mr-2">⏳</span>
                         提交中...
                       </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-2" />
-                        提交評論
-                      </>
-                    )}
+                    ) : "新增評論"}
                   </Button>
                 </div>
               </div>
