@@ -45,37 +45,37 @@ import {
 
 // 報告類型中文映射表
 const reportTypeMap: Record<string, string> = {
-  "wall": "天地壁",
-  "socket": "插座/開關",
-  "paint": "油漆",
-  "position": "設備安裝位置",
-  "clean": "清潔",
-  "water": "漏水",
-  "major": "與圖面不符之重大短缺",
-  "other": "其他-請在圖面標註",
+  wall: "天地壁",
+  socket: "插座/開關",
+  paint: "油漆",
+  position: "設備安裝位置",
+  clean: "清潔",
+  water: "漏水",
+  major: "與圖面不符之重大短缺",
+  other: "其他-請在圖面標註",
 };
 
 // 狀態對應的標籤與顏色
 const statusMap: Record<string, { label: string; color: string; icon: any }> = {
-  pending: { 
-    label: "待處理", 
-    color: "bg-yellow-100 text-yellow-800 border-yellow-200", 
-    icon: Clock 
+  pending: {
+    label: "待處理",
+    color: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    icon: Clock,
   },
-  processing: { 
-    label: "處理中", 
-    color: "bg-blue-100 text-blue-800 border-blue-200", 
-    icon: AlertCircle 
+  processing: {
+    label: "處理中",
+    color: "bg-blue-100 text-blue-800 border-blue-200",
+    icon: AlertCircle,
   },
-  completed: { 
-    label: "已完成", 
-    color: "bg-green-100 text-green-800 border-green-200", 
-    icon: CheckCircle 
+  completed: {
+    label: "已完成",
+    color: "bg-green-100 text-green-800 border-green-200",
+    icon: CheckCircle,
   },
-  rejected: { 
-    label: "不處理", 
-    color: "bg-red-100 text-red-800 border-red-200", 
-    icon: XCircle 
+  rejected: {
+    label: "不處理",
+    color: "bg-red-100 text-red-800 border-red-200",
+    icon: XCircle,
   },
 };
 
@@ -120,32 +120,28 @@ export default function ReportDetail() {
   // 路徑參數
   const [, params] = useRoute("/report/:id");
   const reportId = params?.id;
-  
+
   // 本地狀態
   const [statusEditing, setStatusEditing] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [improvementText, setImprovementText] = useState("");
   const [newComment, setNewComment] = useState("");
   const [commenterName, setCommenterName] = useState("");
-  
+
   // Hooks
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // 查詢報告資料
-  const {
-    data,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: [`/api/reports/${reportId}`],
     enabled: !!reportId,
   });
-  
+
   // 狀態更新函數
   const updateStatusMutation = useMutation({
     mutationFn: async (data: { status: string; improvementText?: string }) => {
-      return apiRequest(`/api/reports/${reportId}`, "PATCH", data);
+      return apiRequest("PATCH", `/api/reports/${reportId}`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/reports/${reportId}`] });
@@ -167,7 +163,7 @@ export default function ReportDetail() {
   // 新增評論函數
   const addCommentMutation = useMutation({
     mutationFn: async (data: { content: string; createdBy: string }) => {
-      return apiRequest(`/api/reports/${reportId}/comments`, "POST", data);
+      return apiRequest("POST", `/api/reports/${reportId}/comments`, data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/reports/${reportId}`] });
@@ -185,25 +181,27 @@ export default function ReportDetail() {
       });
     },
   });
-  
+
   // 預設空報告
   const emptyReport: Report = {
     id: 0,
-    building: '',
-    location: '',
-    reportType: '',
-    description: '',
-    contact: '',
+    building: "",
+    location: "",
+    reportType: "",
+    description: "",
+    contact: "",
     photos: [],
-    createdAt: '',
-    status: 'pending',
-    updatedAt: '',
+    createdAt: "",
+    status: "pending",
+    updatedAt: "",
   };
-  
+
   // 提取報告和評論
-  const report = data ? ((data as any).report || data || emptyReport) : emptyReport;
+  const report = data
+    ? (data as any).report || data || emptyReport
+    : emptyReport;
   const comments = data && (data as any).comments ? (data as any).comments : [];
-  
+
   // 處理狀態更新提交
   const handleStatusUpdate = () => {
     if (!selectedStatus) {
@@ -243,12 +241,12 @@ export default function ReportDetail() {
       return;
     }
 
-    addCommentMutation.mutate({ 
-      content: newComment.trim(), 
-      createdBy: commenterName.trim() 
+    addCommentMutation.mutate({
+      content: newComment.trim(),
+      createdBy: commenterName.trim(),
     });
   };
-  
+
   // 當報告資料變更時更新狀態和改善文字
   useEffect(() => {
     if (report && report.id > 0) {
@@ -264,9 +262,9 @@ export default function ReportDetail() {
     }
     return Clock;
   };
-  
+
   const StatusIcon = getStatusIcon();
-  
+
   // 加載中狀態
   if (isLoading) {
     return <LoadingView />;
@@ -274,7 +272,7 @@ export default function ReportDetail() {
 
   // 錯誤狀態
   if (isError || !report || report.id === 0) {
-    return <ErrorView reportId={reportId || ''} />;
+    return <ErrorView reportId={reportId || ""} />;
   }
 
   // 主要內容
@@ -302,8 +300,8 @@ export default function ReportDetail() {
                   {format(new Date(report.createdAt), "yyyy/MM/dd HH:mm")}
                 </CardDescription>
                 {report.status && (
-                  <Badge 
-                    className={`mt-2 ${statusMap[report.status].color}`} 
+                  <Badge
+                    className={`mt-2 ${statusMap[report.status].color}`}
                     variant="outline"
                   >
                     <StatusIcon className="h-3.5 w-3.5 mr-1" />
@@ -363,7 +361,7 @@ export default function ReportDetail() {
                     </div>
                   </>
                 )}
-                
+
                 {report.improvementText && (
                   <>
                     <h3 className="text-sm font-medium text-gray-500 flex items-center mb-2">
@@ -375,7 +373,8 @@ export default function ReportDetail() {
                         {report.improvementText}
                       </p>
                       <div className="text-xs text-gray-500 mt-2">
-                        最後更新: {format(new Date(report.updatedAt), "yyyy/MM/dd HH:mm")}
+                        最後更新:{" "}
+                        {format(new Date(report.updatedAt), "yyyy/MM/dd HH:mm")}
                       </div>
                     </div>
                   </>
@@ -406,20 +405,22 @@ export default function ReportDetail() {
                 </div>
               </div>
             </div>
-            
+
             <Separator className="my-8" />
-            
+
             {/* 狀態更新區塊 */}
             <div className="mt-8">
               <h3 className="text-lg font-bold mb-4 flex items-center">
                 <Wrench className="h-5 w-5 mr-2" />
                 改善狀態管理
               </h3>
-              
+
               {statusEditing ? (
                 <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
                   <div className="mb-4">
-                    <label className="block text-sm font-medium mb-2">狀態</label>
+                    <label className="block text-sm font-medium mb-2">
+                      狀態
+                    </label>
                     <Select
                       value={selectedStatus}
                       onValueChange={setSelectedStatus}
@@ -435,9 +436,11 @@ export default function ReportDetail() {
                       </SelectContent>
                     </Select>
                   </div>
-                  
+
                   <div className="mb-4">
-                    <label className="block text-sm font-medium mb-2">改善說明</label>
+                    <label className="block text-sm font-medium mb-2">
+                      改善說明
+                    </label>
                     <Textarea
                       placeholder="輸入改善處理說明..."
                       value={improvementText}
@@ -446,9 +449,9 @@ export default function ReportDetail() {
                       className="resize-none"
                     />
                   </div>
-                  
+
                   <div className="flex gap-2">
-                    <Button 
+                    <Button
                       onClick={handleStatusUpdate}
                       disabled={updateStatusMutation.isPending}
                     >
@@ -457,10 +460,12 @@ export default function ReportDetail() {
                           <span className="animate-spin mr-2">⏳</span>
                           儲存中...
                         </>
-                      ) : "儲存變更"}
+                      ) : (
+                        "儲存變更"
+                      )}
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => setStatusEditing(false)}
                     >
                       取消
@@ -483,28 +488,36 @@ export default function ReportDetail() {
                 </div>
               )}
             </div>
-            
+
             {/* 評論區塊 */}
             <div className="mt-8">
               <h3 className="text-lg font-bold mb-4 flex items-center">
                 <MessageSquare className="h-5 w-5 mr-2" />
                 討論區
               </h3>
-              
+
               <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
                 {/* 評論列表 */}
                 <div className="mb-6">
                   {comments.length > 0 ? (
                     <div className="space-y-4">
                       {comments.map((comment) => (
-                        <div key={comment.id} className="bg-white p-3 rounded-md border border-gray-100">
+                        <div
+                          key={comment.id}
+                          className="bg-white p-3 rounded-md border border-gray-100"
+                        >
                           <div className="flex justify-between items-start mb-2">
                             <p className="font-medium">{comment.createdBy}</p>
                             <span className="text-xs text-gray-500">
-                              {format(new Date(comment.createdAt), "yyyy/MM/dd HH:mm")}
+                              {format(
+                                new Date(comment.createdAt),
+                                "yyyy/MM/dd HH:mm",
+                              )}
                             </span>
                           </div>
-                          <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
+                          <p className="text-gray-700 whitespace-pre-wrap">
+                            {comment.content}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -515,7 +528,7 @@ export default function ReportDetail() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* 新增評論表單 */}
                 <div className="border-t border-gray-200 pt-4">
                   <h4 className="font-medium mb-2">新增評論</h4>
@@ -534,7 +547,7 @@ export default function ReportDetail() {
                       className="resize-none"
                     />
                   </div>
-                  <Button 
+                  <Button
                     onClick={handleCommentSubmit}
                     disabled={addCommentMutation.isPending}
                     className="w-full sm:w-auto"
@@ -544,7 +557,9 @@ export default function ReportDetail() {
                         <span className="animate-spin mr-2">⏳</span>
                         提交中...
                       </>
-                    ) : "新增評論"}
+                    ) : (
+                      "新增評論"
+                    )}
                   </Button>
                 </div>
               </div>
