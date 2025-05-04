@@ -13,7 +13,6 @@ import { useEffect, useState } from "react";
 
 // 匯出位置對照表，供其他組件使用
 export const locationLabels: Record<string, string> = {
-  // A 棟
   "A-lobby": "A-菲儷大廳",
   "A-stairs": "A-藝術梯廳",
   "A-reading": "A-敦峰閱覽室",
@@ -31,15 +30,13 @@ export const locationLabels: Record<string, string> = {
   "A-8F": "A-8F",
   "A-9F": "A-9F",
   "A-10F": "A-10F",
-
-  // B 棟
   "B-lobby": "B-琴韻大廳",
   "B-hall": "B-安幔交誼廳",
   "B-stairs": "B-藝術梯廳",
   "B-reading": "B-人文閱讀館",
   "B-emergency": "B-安全梯間",
-  "B-elevaB-tor": "B-梯廳",
-  "B-roof": "頂樓",
+  "B-elevator": "B-梯廳",
+  "B-roof": "B-頂樓",
   "B-1F": "B-1F",
   "B-2F": "B-2F",
   "B-3F": "B-3F",
@@ -50,8 +47,6 @@ export const locationLabels: Record<string, string> = {
   "B-8F": "B-8F",
   "B-9F": "B-9F",
   "B-10F": "B-10F",
-
-  // C 棟
   "C-tunnel": "C-多倫圖書隧道",
   "C-classroom": "C-多媒體雙語教室",
   "C-study": "C-集雅學學區",
@@ -70,10 +65,10 @@ export const locationLabels: Record<string, string> = {
   "C-9F": "C-9F",
   "C-10F": "C-10F",
   "C-11F": "C-11F",
-
-  // D 棟
   "D-lobby": "D-伯爵大廳",
-  "D-kitchen": "D-歐風廚房",
+  "D-view": "D-綠中海景觀區",
+  "D-stairs": "D-藝術梯廳",
+  "D-gym": "D-海力士健身房",
   "D-emergency": "D-安全梯間",
   "D-elevator": "D-梯廳",
   "D-roof": "D-頂樓",
@@ -88,10 +83,12 @@ export const locationLabels: Record<string, string> = {
   "D-9F": "D-9F",
   "D-10F": "D-10F",
   "D-11F": "D-11F",
-
-  // E 棟
   "E-bar": "E-美式運動BAR",
-  "E-cinema": "E-光影視聽室",
+  "E-media": "E-多媒體影音廳",
+  "E-climbing": "E-攀岩活動區",
+  "E-pool": "E-撞球室",
+  "E-pingpong": "E-桌球室",
+  "E-kids": "E-小天使快樂天堂",
   "E-emergency": "E-安全梯間",
   "E-elevator": "E-梯廳",
   "E-roof": "E-頂樓",
@@ -106,10 +103,11 @@ export const locationLabels: Record<string, string> = {
   "E-9F": "E-9F",
   "E-10F": "E-10F",
   "E-11F": "E-11F",
-
-  // F 棟
-  "F-lounge": "F-雲端沙龍",
-  "F-yoga": "F-靜修瑜珈",
+  "F-lobby": "F-大廳",
+  "F-kitchen": "F-複合餐飲教室",
+  "F-meeting": "F-多功能會議廳",
+  "F-laundry": "F-洗衣中心",
+  "F-view": "F-悠天地景觀區",
   "F-emergency": "F-安全梯間",
   "F-elevator": "F-梯廳",
   "F-roof": "F-頂樓",
@@ -124,10 +122,6 @@ export const locationLabels: Record<string, string> = {
   "F-9F": "F-9F",
   "F-10F": "F-10F",
   "F-11F": "F-11F",
-
-  // G 棟
-  "G-reception": "G-接待大廳",
-  "G-gym": "G-有氧健身房",
   "G-emergency": "G-安全梯間",
   "G-elevator": "G-梯廳",
   "G-roof": "G-頂樓",
@@ -142,10 +136,9 @@ export const locationLabels: Record<string, string> = {
   "G-9F": "G-9F",
   "G-10F": "G-10F",
   "G-11F": "G-11F",
-
-  // H 棟
-  "H-lobby": "H-奇幻大廳",
-  "H-garden": "H-空中花園",
+  "H-lobby": "H-文華大廳",
+  "H-stairs": "H-藝術梯廳",
+  "H-chess": "H-尊爵棋藝室",
   "H-emergency": "H-安全梯間",
   "H-elevator": "H-梯廳",
   "H-roof": "H-頂樓",
@@ -159,10 +152,7 @@ export const locationLabels: Record<string, string> = {
   "H-8F": "H-8F",
   "H-9F": "H-9F",
   "H-10F": "H-10F",
-
-  // I 棟
-  "I-pool": "I-無邊際泳池",
-  "I-spa": "I-渡假SPA",
+  "H-11F": "H-11F",
   "I-emergency": "I-安全梯間",
   "I-elevator": "I-梯廳",
   "I-roof": "I-頂樓",
@@ -175,10 +165,11 @@ export const locationLabels: Record<string, string> = {
   "I-7F": "I-7F",
   "I-8F": "I-8F",
   "I-9F": "I-9F",
-
-  // J 棟
-  "J-entrance": "J-尊爵入口",
-  "J-terrace": "J-觀景露臺",
+  "I-10F": "I-10F",
+  "I-11F": "I-11F",
+  "J-lobby": "J-文華大廳",
+  "J-stairs": "J-藝術梯廳",
+  "J-chess": "J-尊爵棋藝室",
   "J-emergency": "J-安全梯間",
   "J-elevator": "J-梯廳",
   "J-roof": "J-頂樓",
@@ -190,20 +181,14 @@ export const locationLabels: Record<string, string> = {
   "J-6F": "J-6F",
   "J-7F": "J-7F",
   "J-8F": "J-8F",
-
-  // 戶外公設
-  "outdoor-garden": "中庭花園",
-  "outdoor-walkway": "步道",
-  "outdoor-playground": "兒童遊戲區",
-  "outdoor-pavilion": "涼亭",
-  "outdoor-bbq": "BBQ區",
-  "outdoor-other": "其他公共設施",
-
-  // 停車場
+  "J-9F": "J-9F",
+  "J-10F": "J-10F",
+  "J-11F": "J-11F",
+  "outdoor-common": "戶外公設",
   "parking-B1": "B1停車場",
   "parking-B2": "B2停車場",
   "parking-B3": "B3停車場",
-  "parking-outdoor": "AB棟停車場",
+  "parking-AB": "AB棟停車場",
 };
 
 interface CategorySelectionSectionProps {
