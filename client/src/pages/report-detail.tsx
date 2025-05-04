@@ -32,6 +32,17 @@ interface Report {
   contact: string;
   photos: string[];
   createdAt: string;
+  status: "pending" | "processing" | "completed" | "rejected";
+  improvementText?: string;
+  updatedAt: string;
+}
+
+interface Comment {
+  id: number;
+  reportId: number;
+  content: string;
+  createdBy: string;
+  createdAt: string;
 }
 
 // 報告類型中文對照表

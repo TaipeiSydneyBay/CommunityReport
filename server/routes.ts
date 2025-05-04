@@ -1,7 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { reportValidationSchema } from "@shared/schema";
+import { reportValidationSchema, updateReportSchema, commentValidationSchema } from "@shared/schema";
 import multer from "multer";
 import { uploadToS3, generatePresignedUrl } from "./s3";
 import { ZodError } from "zod";
@@ -113,10 +113,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Report not found" });
       }
 
-      return res.json(report);
+      // 取得評論
+      const comments = await storage.getReportComments(id);
+
+      return res.json({ report, comments });
     } catch (error) {
       console.error("Error fetching report:", error);
       return res.status(500).json({ message: "Failed to fetch report" });
+    }
+  });
+  
+  // Update report status and improvement text
+  app.patch("/api/reports/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid report ID" });
+      }
+      
+      // 驗證更新資料
+      const updateData = updateReportSchema.parse(req.body);
+      
+      // 更新報告狀態
+      const updatedReport = await storage.updateReportStatus(id, updateData);
+      if (!updatedReport) {
+        return res.status(404).json({ message: "Report not found" });
+      }
+      
+      return res.json(updatedReport);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      
+      console.error("Error updating report status:", error);
+      return res.status(500).json({ message: "Failed to update report status" });
+    }
+  });
+  
+  // Add comment to a report
+  app.post("/api/reports/:id/comments", async (req: Request, res: Response) => {
+    try {
+      const reportId = parseInt(req.params.id);
+      if (isNaN(reportId)) {
+        return res.status(400).json({ message: "Invalid report ID" });
+      }
+      
+      // 確認報告存在
+      const report = await storage.getReportById(reportId);
+      if (!report) {
+        return res.status(404).json({ message: "Report not found" });
+      }
+      
+      // 驗證評論資料
+      const commentData = commentValidationSchema.parse({
+        ...req.body,
+        reportId
+      });
+      
+      // 添加評論
+      const comment = await storage.addComment(commentData);
+      
+      return res.status(201).json(comment);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      
+      console.error("Error adding comment:", error);
+      return res.status(500).json({ message: "Failed to add comment" });
+    }
+  });
+  
+  // Get comments for a report
+  app.get("/api/reports/:id/comments", async (req: Request, res: Response) => {
+    try {
+      const reportId = parseInt(req.params.id);
+      if (isNaN(reportId)) {
+        return res.status(400).json({ message: "Invalid report ID" });
+      }
+      
+      // 獲取報告評論
+      const comments = await storage.getReportComments(reportId);
+      
+      return res.json(comments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      return res.status(500).json({ message: "Failed to fetch comments" });
     }
   });
   
